@@ -37,7 +37,7 @@ GEMINI_DEFAULT_BASE = "https://generativelanguage.googleapis.com/v1beta/openai/"
 GROQ_DEFAULT_BASE = "https://api.groq.com/openai/v1"
 CEREBRAS_DEFAULT_BASE = "https://api.cerebras.ai/v1"
 SAMBANOVA_DEFAULT_BASE = "https://api.sambanova.ai/v1"
-ANTHROPIC_DEFAULT_BASE = "https://api.anthropic.com"
+ANTHROPIC_DEFAULT_BASE = "https://api.anthropic.com/v1"
 
 
 @dataclass(frozen=True, slots=True)

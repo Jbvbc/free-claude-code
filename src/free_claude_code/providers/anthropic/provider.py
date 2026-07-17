@@ -52,7 +52,6 @@ class AnthropicDirectProvider(AnthropicMessagesTransport):
         return {
             "x-api-key": self._api_key,
             "anthropic-version": "2023-06-01",
-            "anthropic-beta": "tools-2025-04-01",
             "Content-Type": "application/json",
         }
 
