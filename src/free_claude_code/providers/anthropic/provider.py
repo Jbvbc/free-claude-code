@@ -11,13 +11,16 @@ from free_claude_code.providers.transports.anthropic_messages import (
 
 _ANTHROPIC_MODEL_IDS = frozenset(
     {
-        "claude-sonnet-4-20250514",
-        "claude-3-5-sonnet-20241022",
-        "claude-opus-4-20250514",
-        "claude-4-5-sonnet-20251022",
-        "claude-4-5-haiku-20251022",
-        "claude-3-5-haiku-20241022",
-        "claude-opus-4-8-20250626",
+        "claude-sonnet-5",
+        "claude-fable-5",
+        "claude-opus-4-8",
+        "claude-opus-4-7",
+        "claude-sonnet-4-6",
+        "claude-opus-4-6",
+        "claude-opus-4-5-20251101",
+        "claude-haiku-4-5-20251001",
+        "claude-sonnet-4-5-20250929",
+        "claude-opus-4-1-20250805",
     }
 )
 

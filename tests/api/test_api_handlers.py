@@ -483,7 +483,7 @@ async def test_messages_handler_routes_classifier_to_anthropic_when_key_set() ->
         assert isinstance(response, StreamingResponse)
         await _streaming_body_text(response)
 
-    assert provider.requests[0].model == "claude-sonnet-4-20250514"
+    assert provider.requests[0].model == "claude-haiku-4-5-20251001"
     assert provider.stream_kwargs[0]["thinking_enabled"] is True
     assert _trace_events(
         trace_mock,
