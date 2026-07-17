@@ -466,6 +466,41 @@ async def test_messages_handler_keeps_existing_no_thinking_for_classifier() -> N
 
 
 @pytest.mark.asyncio
+async def test_messages_handler_routes_classifier_to_anthropic_when_key_set() -> None:
+    provider = FakeProvider()
+    settings = Settings()
+    settings.anthropic_api_key = "sk-ant-test"
+    handler = MessagesHandler(settings, provider_resolver=lambda _: provider)
+    request = MessagesRequest(
+        model="nvidia_nim/test-model",
+        max_tokens=100,
+        system=_CLASSIFIER_SYSTEM,
+        messages=[Message(role="user", content=_CLASSIFIER_USER)],
+    )
+
+    with patch("free_claude_code.api.handlers.messages.trace_event") as trace_mock:
+        response = await handler.create(request)
+        assert isinstance(response, StreamingResponse)
+        await _streaming_body_text(response)
+
+    assert provider.requests[0].model == "claude-sonnet-4-20250514"
+    assert provider.stream_kwargs[0]["thinking_enabled"] is True
+    assert _trace_events(
+        trace_mock,
+        "free_claude_code.api.optimization.safety_classifier_to_anthropic",
+    ) == [
+        {
+            "stage": "routing",
+            "event": (
+                "free_claude_code.api.optimization.safety_classifier_to_anthropic"
+            ),
+            "source": "api",
+            "model": "test-model",
+        }
+    ]
+
+
+@pytest.mark.asyncio
 async def test_messages_handler_optimization_intercepts_before_provider_execution() -> (
     None
 ):

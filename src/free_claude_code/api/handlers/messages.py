@@ -35,6 +35,9 @@ from free_claude_code.application.errors import ApplicationError, InvalidRequest
 from free_claude_code.application.execution import ProviderExecutor, TokenCounter
 from free_claude_code.application.ports import ProviderResolver
 from free_claude_code.application.routing import ModelRouter, RoutedMessagesRequest
+from free_claude_code.config.provider_catalog import (
+    PROVIDER_CATALOG,
+)
 from free_claude_code.config.settings import Settings
 from free_claude_code.core.anthropic import (
     MessagesRequest,
@@ -63,6 +66,8 @@ class _MessagesCompleteResult:
 _MessagesResult = _MessagesStreamResult | _MessagesCompleteResult
 MessageIntercept = Callable[[RoutedMessagesRequest], _MessagesResult | None]
 
+SAFETY_CLASSIFIER_ANTHROPIC_MODEL = "claude-sonnet-4-20250514"
+
 
 class MessagesHandler:
     """Handle Anthropic-compatible Messages requests."""
@@ -87,6 +92,7 @@ class MessagesHandler:
             log_raw_payloads=settings.log_raw_api_payloads,
         )
         self._message_intercepts: tuple[MessageIntercept, ...] = (
+            self._intercept_safety_classifier_to_anthropic,
             self._intercept_web_server_tool,
             self._intercept_local_optimization,
         )
@@ -296,6 +302,48 @@ class MessagesHandler:
             if result is not None:
                 return result
         return None
+
+    def _intercept_safety_classifier_to_anthropic(
+        self, routed: RoutedMessagesRequest
+    ) -> _MessagesResult | None:
+        if not self._settings.anthropic_api_key:
+            return None
+        if not is_safety_classifier_request(routed.request):
+            return None
+
+        trace_event(
+            stage="routing",
+            event="free_claude_code.api.optimization.safety_classifier_to_anthropic",
+            source="api",
+            model=routed.request.model,
+        )
+
+        new_resolved = replace(
+            routed.resolved,
+            provider_id="anthropic",
+            provider_model=SAFETY_CLASSIFIER_ANTHROPIC_MODEL,
+            provider_model_ref=SAFETY_CLASSIFIER_ANTHROPIC_MODEL,
+            thinking_enabled=True,
+            capabilities=PROVIDER_CATALOG["anthropic"].capabilities,
+        )
+        new_request = routed.request.model_copy(
+            update={"model": SAFETY_CLASSIFIER_ANTHROPIC_MODEL},
+            deep=True,
+        )
+        anthropic_routed = RoutedMessagesRequest(
+            request=new_request,
+            resolved=new_resolved,
+        )
+
+        request_id = new_request_id()
+        stream = self._provider_executor.stream(
+            anthropic_routed,
+            wire_api="messages",
+            raw_log_label="FULL_PAYLOAD",
+            raw_log_payload=routed.request.model_dump(),
+            request_id=request_id,
+        )
+        return _MessagesStreamResult(body=stream)
 
     def _intercept_web_server_tool(
         self, routed: RoutedMessagesRequest

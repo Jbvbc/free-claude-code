@@ -1,6 +1,7 @@
 """Re-exports default upstream base URLs from the config provider catalog."""
 
 from free_claude_code.config.provider_catalog import (
+    ANTHROPIC_DEFAULT_BASE,
     CEREBRAS_DEFAULT_BASE,
     CLOUDFLARE_AI_REST_ROOT,
     CODESTRAL_DEFAULT_BASE,
@@ -28,6 +29,7 @@ from free_claude_code.config.provider_catalog import (
 )
 
 __all__ = (
+    "ANTHROPIC_DEFAULT_BASE",
     "CEREBRAS_DEFAULT_BASE",
     "CLOUDFLARE_AI_REST_ROOT",
     "CODESTRAL_DEFAULT_BASE",

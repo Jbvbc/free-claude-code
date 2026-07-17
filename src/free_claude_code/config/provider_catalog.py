@@ -37,6 +37,7 @@ GEMINI_DEFAULT_BASE = "https://generativelanguage.googleapis.com/v1beta/openai/"
 GROQ_DEFAULT_BASE = "https://api.groq.com/openai/v1"
 CEREBRAS_DEFAULT_BASE = "https://api.cerebras.ai/v1"
 SAMBANOVA_DEFAULT_BASE = "https://api.sambanova.ai/v1"
+ANTHROPIC_DEFAULT_BASE = "https://api.anthropic.com"
 
 
 @dataclass(frozen=True, slots=True)
@@ -250,6 +251,15 @@ PROVIDER_CATALOG: dict[str, ProviderDescriptor] = {
         credential_attr="zai_api_key",
         default_base_url=ZAI_DEFAULT_BASE,
         proxy_attr="zai_proxy",
+    ),
+    "anthropic": ProviderDescriptor(
+        provider_id="anthropic",
+        display_name="Anthropic Direct",
+        credential_env="ANTHROPIC_API_KEY",
+        credential_url="https://console.anthropic.com/settings/keys",
+        credential_attr="anthropic_api_key",
+        default_base_url=ANTHROPIC_DEFAULT_BASE,
+        proxy_attr="anthropic_proxy",
     ),
     "lmstudio": ProviderDescriptor(
         provider_id="lmstudio",

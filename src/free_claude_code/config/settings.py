@@ -280,6 +280,10 @@ class Settings(BaseSettings):
         default="", validation_alias="ANTHROPIC_AUTH_TOKEN"
     )
 
+    # ==================== Anthropic Direct API Config ====================
+    anthropic_api_key: str = Field(default="", validation_alias="ANTHROPIC_API_KEY")
+    anthropic_proxy: str = Field(default="", validation_alias="ANTHROPIC_PROXY")
+
     # Handle empty strings for optional string fields
     @field_validator(
         "telegram_bot_token",

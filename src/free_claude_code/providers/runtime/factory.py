@@ -260,6 +260,16 @@ def _create_sambanova(
     return SambaNovaProvider(config, rate_limiter=rate_limiter)
 
 
+def _create_anthropic(
+    config: ProviderConfig,
+    _settings: Settings,
+    rate_limiter: ProviderRateLimiter,
+) -> BaseProvider:
+    from free_claude_code.providers.anthropic import AnthropicDirectProvider
+
+    return AnthropicDirectProvider(config, rate_limiter=rate_limiter)
+
+
 def _create_cerebras(
     config: ProviderConfig,
     _settings: Settings,
@@ -271,6 +281,7 @@ def _create_cerebras(
 
 
 PROVIDER_FACTORIES: dict[str, ProviderFactory] = {
+    "anthropic": _create_anthropic,
     "nvidia_nim": _create_nvidia_nim,
     "open_router": _create_open_router,
     "gemini": _create_gemini,

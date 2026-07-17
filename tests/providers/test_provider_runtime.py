@@ -15,6 +15,7 @@ from free_claude_code.config.provider_catalog import (
     ZAI_DEFAULT_BASE,
 )
 from free_claude_code.config.provider_ids import SUPPORTED_PROVIDER_IDS
+from free_claude_code.providers.anthropic import AnthropicDirectProvider
 from free_claude_code.providers.cerebras import CerebrasProvider
 from free_claude_code.providers.cloudflare import CloudflareProvider
 from free_claude_code.providers.codestral import CodestralProvider
@@ -335,6 +336,7 @@ def test_create_provider_instantiates_each_builtin():
         provider_rate_window=11,
         provider_max_concurrency=3,
         sambanova_api_key="test_sambanova_key",
+        anthropic_api_key="test_anthropic_key",
     )
     cases = {
         "nvidia_nim": NvidiaNimProvider,
@@ -361,6 +363,7 @@ def test_create_provider_instantiates_each_builtin():
         "groq": GroqProvider,
         "sambanova": SambaNovaProvider,
         "cerebras": CerebrasProvider,
+        "anthropic": AnthropicDirectProvider,
     }
     sentinel_limiter = MagicMock(spec=ProviderRateLimiter)
 
